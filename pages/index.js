@@ -21,6 +21,7 @@ export default function Home() {
     ""
   );
   const [traceId, setTraceId] = useLocalStorage("traceId", "");
+  const [courseId, setCourseId] = useLocalStorage("courseId", "");
   const [questions, setQuestions] = useLocalStorage("questions", "");
   const [answerCondition, setAnswerCondition] = useLocalStorage(
     "questions",
@@ -52,8 +53,56 @@ export default function Home() {
     e.preventDefault();
     // 获取题目数量
     console.log(authorization);
+
+    const listResponse = await fetch(`/utestapi/questionTraining/list?ocId=${courseId}&lang=zh`, {
+      "headers": {
+        "accept": "*/*",
+        "accept-language": "zh-CN,zh;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6",
+        "authorization": authorization,
+        "cache-control": "no-cache",
+        "content-type": "application/json",
+        "pragma": "no-cache",
+        "sec-ch-ua": "\" Not A;Brand\";v=\"99\", \"Chromium\";v=\"112\", \"Google Chrome\";v=\"112\"",
+        "sec-ch-ua-mobile": "?0",
+        "sec-ch-ua-platform": "\"macOS\"",
+        "sec-fetch-dest": "empty",
+        "sec-fetch-mode": "cors",
+        "sec-fetch-site": "same-site"
+      },
+      "referrer": "https://courseweb.ulearning.cn/ulearning/index.html",
+      "referrerPolicy": "strict-origin-when-cross-origin",
+      "body": null,
+      "method": "GET",
+      "mode": "cors",
+      "credentials": "include"
+    });
+
+  //   {
+  //     "code": 1,
+  //     "message": "成功",
+  //     "result": [
+  //         {
+  //             "id": 1511,
+  //             "ocId": 120798,
+  //             "orgId": 3755,
+  //             "state": 1,
+  //             "createTime": 1685500773000,
+  //             "updateTime": 1685500868000
+  //         }
+  //     ]
+  // }
+    const listJson = await listResponse.json();
+    if (listJson.code >= 2000) {
+      setQuestions(listJson.message);
+      return;
+    }
+    console.log(listJson);
+    const { ocId, orgId, id } = listJson.result[0];
+    const qtId = id;
+
+
     const answerConditionResponse = await fetch(
-      "/api/questionTraining/student/training?qtId=1511&ocId=120798&traceId=11735745",
+      `/utestapi/questionTraining/student/training?qtId=${qtId}&ocId=${ocId}&qtType=1&traceId=${traceId}`,
       config
     );
     // {
@@ -80,7 +129,7 @@ export default function Home() {
 
     // 答案
     const answersResponse = await fetch(
-      `/api/questionTraining/student/answerSheet?qtId=1511&ocId=120798&qtType=1&traceId=${traceId}`,
+      `/utestapi/questionTraining/student/answerSheet?qtId=${qtId}&ocId=${ocId}&qtType=1&traceId=${traceId}`,
       config
     );
     const answers = await answersResponse.json();
@@ -139,7 +188,7 @@ export default function Home() {
 
     // 题库
     const questionBankResponse = await fetch(
-      `/api/questionTraining/student/questionList?qtId=1511&ocId=120798&qtType=1&pn=1&ps=${answerCondition.orderTotal}&traceId=11735745`,
+      `/utestapi/questionTraining/student/questionList?qtId=${qtId}&ocId=${ocId}&qtType=1&pn=1&ps=${answerCondition.orderTotal}&traceId=${traceId}`,
       config
     );
 
@@ -216,7 +265,7 @@ export default function Home() {
       //     },
     });
     ques = ques
-      .replace("&nbsp;", " ")
+      .replace(/&nbsp;/g, " ")
       .replace("&lt;", "<")
       .replace("&gt;", ">")
       .replace("&amp;", "&")
@@ -256,7 +305,15 @@ export default function Home() {
           onChange={(e) => {
             setTraceId(e.target.value);
           }}
-          placeholder="请输入优学院题库TraceId"
+          placeholder="请输入优学院题库UserId/TraceId"
+        />
+        <input
+          className="w-64 p-2 border border-gray-300 rounded-md"
+          value={courseId}
+          onChange={(e) => {
+            setCourseId(e.target.value);
+          }}
+          placeholder="请输入优学院题库CourseId"
         />
         {/* Authorization: */}
         <input
