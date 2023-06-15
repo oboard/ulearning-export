@@ -305,7 +305,7 @@ export default function Home() {
           onChange={(e) => {
             setTraceId(e.target.value);
           }}
-          placeholder="请输入优学院题库UserId/TraceId"
+          placeholder="请输入优学院账号UserId/TraceId"
         />
         <input
           className="w-64 p-2 border border-gray-300 rounded-md"
