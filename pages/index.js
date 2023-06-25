@@ -212,7 +212,7 @@ export default function Home() {
     let index = 0;
     quesitionBankJson.result.trainingQuestions.forEach((item) => {
       index++;
-      ques += index + ". " + item.title + "\n";
+      ques += index + "、 " + item.title + "\n";
       switch (item.type) {
         case 1:
         case 2:
@@ -227,7 +227,7 @@ export default function Home() {
         case 3:
           break;
         case 4:
-          ques += "正确 错误\n";
+          // ques += "正确 错误\n";
           break;
       }
       if (answerMap[item.id] === 1) {
@@ -287,6 +287,8 @@ export default function Home() {
       .replace("&apos;", "'")
       .replace("<br />", "")
       .replace("<br/>", "")
+      .replace("答案：true", "答案：正确")
+      .replace("答案：false", "答案：错误")
       .replace("<br>", "")
       .replace(/<[^>]+>/g, ""); // 去掉所有的html标记
     setQuestions(ques);
