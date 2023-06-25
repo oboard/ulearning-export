@@ -280,16 +280,16 @@ export default function Home() {
     });
     ques = ques
       .replace(/&nbsp;/g, " ")
-      .replace("&lt;", "<")
-      .replace("&gt;", ">")
-      .replace("&amp;", "&")
-      .replace("&quot;", '"')
-      .replace("&apos;", "'")
-      .replace("<br />", "")
-      .replace("<br/>", "")
-      .replace("答案：true", "答案：正确")
-      .replace("答案：false", "答案：错误")
-      .replace("<br>", "")
+      .replace(/&lt;/g, "<")
+      .replace(/&gt;/g, ">")
+      .replace(/&amp;/g, "&")
+      .replace(/&quot;/g, '"')
+      .replace(/&apos;/g, "'")
+      .replace(/<br \/>/g, "")
+      .replace(/<br\/>/g, "")
+      .replace(/答案：true/g, "答案：正确")
+      .replace(/答案：false/g, "答案：错误")
+      .replace(/<br>/g, "")
       .replace(/<[^>]+>/g, ""); // 去掉所有的html标记
     setQuestions(ques);
   };
